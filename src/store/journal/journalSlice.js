@@ -54,8 +54,13 @@ export const journalSlice = createSlice({
             state.messageSaved = `Nota: "${action.payload.title}", actualizada correctamente`
         },
 
-        deleteNoteById: () => {
+        deleteNoteById: (state, action) => {
+            state.isSaving = false;
+            state.notes = state.notes.filter(note => note.id !== action.payload);
 
+            if (state.active?.id === action.payload) {
+                state.active = null;
+            }
         },
     }
 })
