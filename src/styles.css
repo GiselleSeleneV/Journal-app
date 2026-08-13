@@ -5,3 +5,136 @@
 .auth-card {
     animation-duration: 0.45s;
 }
+
+/* ---- Motion system ---- */
+@keyframes journal-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes journal-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes journal-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes journal-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes journal-soft-pulse {
+    0%, 100% {
+        opacity: 0.55;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.04);
+    }
+}
+
+@keyframes journal-shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.journal-fade-up {
+    animation: journal-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.journal-fade-in {
+    animation: journal-fade-in 0.45s ease both;
+}
+
+.journal-scale-in {
+    animation: journal-scale-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.journal-float {
+    animation: journal-float 5.5s ease-in-out infinite;
+}
+
+.journal-soft-pulse {
+    animation: journal-soft-pulse 6s ease-in-out infinite;
+}
+
+.journal-delay-1 { animation-delay: 0.06s; }
+.journal-delay-2 { animation-delay: 0.12s; }
+.journal-delay-3 { animation-delay: 0.18s; }
+.journal-delay-4 { animation-delay: 0.24s; }
+.journal-delay-5 { animation-delay: 0.3s; }
+
+.journal-image-card {
+    animation: journal-scale-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+
+.journal-image-card img {
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.journal-image-card:hover img {
+    transform: scale(1.05);
+}
+
+.journal-picker-card {
+    animation: journal-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.journal-picker-card img {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.journal-picker-card:hover img {
+    transform: scale(1.06);
+}
+
+.journal-note-shell {
+    animation: journal-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.journal-empty-orb {
+    animation: journal-soft-pulse 7s ease-in-out infinite;
+}
+
+.journal-empty-icon {
+    animation: journal-float 4.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .journal-fade-up,
+    .journal-fade-in,
+    .journal-scale-in,
+    .journal-float,
+    .journal-soft-pulse,
+    .journal-image-card,
+    .journal-picker-card,
+    .journal-note-shell,
+    .journal-empty-orb,
+    .journal-empty-icon {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .journal-image-card:hover img,
+    .journal-picker-card:hover img {
+        transform: none !important;
+    }
+}

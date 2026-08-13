@@ -13,7 +13,7 @@ export const NothingSelectedView = () => {
 
     return (
         <Box
-            className='animate__animated animate__fadeIn anime__faster'
+            className="journal-fade-in"
             sx={{
                 minHeight: 'calc(100vh - 120px)',
                 borderRadius: 4,
@@ -27,6 +27,7 @@ export const NothingSelectedView = () => {
             }}
         >
             <Box
+                className="journal-empty-orb"
                 sx={{
                     position: 'absolute',
                     width: 360,
@@ -38,6 +39,7 @@ export const NothingSelectedView = () => {
                 }}
             />
             <Box
+                className="journal-empty-orb"
                 sx={{
                     position: 'absolute',
                     width: 280,
@@ -46,11 +48,13 @@ export const NothingSelectedView = () => {
                     bottom: -70,
                     left: -50,
                     background: 'radial-gradient(circle, rgba(99,102,241,0.22) 0%, transparent 70%)',
+                    animationDelay: '1.2s',
                 }}
             />
 
             <Box sx={{ position: 'relative', textAlign: 'center', maxWidth: 420 }}>
                 <Box
+                    className="journal-empty-icon journal-scale-in"
                     sx={{
                         width: 84,
                         height: 84,
@@ -66,6 +70,7 @@ export const NothingSelectedView = () => {
                     <AutoStoriesOutlined sx={{ fontSize: 42, color: '#E8D5A8' }} />
                 </Box>
                 <Typography
+                    className="journal-fade-up journal-delay-1"
                     sx={{
                         fontFamily: '"Fraunces", serif',
                         fontSize: { xs: 28, sm: 34 },
@@ -77,10 +82,14 @@ export const NothingSelectedView = () => {
                 >
                     ¿Qué quieres escribir hoy?
                 </Typography>
-                <Typography sx={{ color: 'rgba(255,255,255,0.68)', fontSize: 16, lineHeight: 1.7, mb: 3.5 }}>
+                <Typography
+                    className="journal-fade-up journal-delay-2"
+                    sx={{ color: 'rgba(255,255,255,0.68)', fontSize: 16, lineHeight: 1.7, mb: 3.5 }}
+                >
                     Elige una nota a la izquierda o empieza una página nueva. Tu diario te espera.
                 </Typography>
                 <Button
+                    className="journal-fade-up journal-delay-3"
                     onClick={onClickNewNote}
                     disabled={isSaving}
                     sx={{
@@ -92,7 +101,12 @@ export const NothingSelectedView = () => {
                         fontSize: 15,
                         backgroundColor: '#C9A96E',
                         color: '#0F172A',
-                        '&:hover': { backgroundColor: '#D4B87A' },
+                        transition: 'transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease',
+                        '&:hover': {
+                            backgroundColor: '#D4B87A',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 12px 28px rgba(201,169,110,0.28)',
+                        },
                     }}
                 >
                     Nueva nota

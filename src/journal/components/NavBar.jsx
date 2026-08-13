@@ -52,7 +52,7 @@ export const NavBar = ({ drawerWidth = 280, onToggleDrawer }) => {
                         noWrap
                         sx={{
                             fontFamily: '"Fraunces", serif',
-                            fontSize: { xs: 18, sm: 22 },
+                            fontSize: { xs: 22, sm: 26 },
                             fontWeight: 500,
                         }}
                     >
@@ -62,20 +62,25 @@ export const NavBar = ({ drawerWidth = 280, onToggleDrawer }) => {
 
                 <Button
                     onClick={onLogout}
-                    startIcon={<LogoutOutlined />}
+                    startIcon={<LogoutOutlined sx={{ fontSize: { xs: 22, sm: 24 } }} />}
                     sx={{
                         textTransform: 'none',
-                        color: '#64748B',
+                        color: '#F87171',
                         fontWeight: 600,
+                        fontSize: { xs: 15, sm: 16 },
                         borderRadius: 2,
-                        px: { xs: 1, sm: 1.75 },
-                        minWidth: { xs: 40, sm: 'auto' },
+                        px: { xs: 1.25, sm: 2 },
+                        py: 0.85,
+                        minWidth: { xs: 44, sm: 'auto' },
                         '& .MuiButton-startIcon': {
-                            mr: { xs: 0, sm: 0.75 },
+                            mr: { xs: 0, sm: 0.85 },
+                            '& > *:nth-of-type(1)': {
+                                fontSize: { xs: 22, sm: 24 },
+                            },
                         },
                         '&:hover': {
-                            backgroundColor: 'rgba(15, 23, 42, 0.05)',
-                            color: '#0F172A',
+                            backgroundColor: 'rgba(248, 113, 113, 0.12)',
+                            color: '#F87171',
                         },
                     }}
                 >

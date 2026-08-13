@@ -9,9 +9,11 @@ export const useForm = (initialForm = {}, formValidations = {}) => {
         createValidators()
     }, [formState]);
 
+    // Solo reinicia el form al cambiar de nota (o al montar forms sin id).
+    // Si depende del objeto completo, setActiveNote crea un bucle infinito.
     useEffect(() => {
         setFormState(initialForm)
-    }, [initialForm]);
+    }, [initialForm?.id]);
 
 
     const isFormValid = useMemo(() => {

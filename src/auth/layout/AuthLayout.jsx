@@ -31,6 +31,7 @@ export const AuthLayout = ({ children, title = '', subtitle = '' }) => {
                 }}
             >
                 <Box
+                    className="journal-empty-orb"
                     sx={{
                         position: 'absolute',
                         width: 420,
@@ -42,6 +43,7 @@ export const AuthLayout = ({ children, title = '', subtitle = '' }) => {
                     }}
                 />
                 <Box
+                    className="journal-empty-orb"
                     sx={{
                         position: 'absolute',
                         width: 320,
@@ -50,6 +52,7 @@ export const AuthLayout = ({ children, title = '', subtitle = '' }) => {
                         bottom: -90,
                         left: -70,
                         background: 'radial-gradient(circle, rgba(99,102,241,0.28) 0%, transparent 70%)',
+                        animationDelay: '1.4s',
                     }}
                 />
                 <Box

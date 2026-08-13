@@ -1,6 +1,12 @@
 import { collection, getDocs } from "firebase/firestore/lite";
 import { FirebaseDB } from "../firebase/config";
 
+const normalizeImageUrls = (value) => (
+    Array.isArray(value)
+        ? value.filter((url) => typeof url === 'string' && url.startsWith('http'))
+        : []
+);
+
 export const loadNotes = async (uid = '') => {
     if (!uid) throw new Error('El UID del usuario no existe');
 
@@ -8,8 +14,17 @@ export const loadNotes = async (uid = '') => {
     const docs = await getDocs(collectionRef)
 
     const notes = [];
-    docs.forEach(doc => {
-        notes.push({ id: doc.id, ...doc.data() })
+    docs.forEach(docSnap => {
+        const data = docSnap.data();
+
+        notes.push({
+            id: docSnap.id,
+            title: typeof data.title === 'string' ? data.title : '',
+            body: typeof data.body === 'string' ? data.body : '',
+            date: data.date ?? new Date().getTime(),
+            imageUrls: normalizeImageUrls(data.imageUrls),
+            isFavorite: Boolean(data.isFavorite),
+        });
     })
 
     return notes;

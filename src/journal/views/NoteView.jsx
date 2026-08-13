@@ -1,18 +1,18 @@
-import { SaveOutlined } from "@mui/icons-material"
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material"
-import Swal from "sweetalert2"
-import 'sweetalert2/dist/sweetalert2.css'
-import { ImageGallery } from "../components"
+import { SaveOutlined, Star, StarBorder } from "@mui/icons-material"
+import { Box, Button, CircularProgress, IconButton, TextField, Typography } from "@mui/material"
+import { NoteImageGallery } from "../components"
 import { useForm } from '../../hooks/useForm'
 import { useDispatch, useSelector } from "react-redux"
-import { useEffect, useMemo } from "react"
-import { setActiveNote } from "../../store/journal/journalSlice"
-import { startSaveNote } from "../../store/journal"
+import { useEffect, useMemo, useState } from "react"
+import { setActiveNote, toggleNoteImage } from "../../store/journal/journalSlice"
+import { startSaveNote, startToggleFavorite } from "../../store/journal"
+import { formatSavedAgo } from "../../helpers"
 
 export const NoteView = () => {
     const dispatch = useDispatch();
+    const [savedLabel, setSavedLabel] = useState('');
 
-    const { active: note, messageSaved, isSaving } = useSelector(state => state.journal);
+    const { active: note, lastSavedAt, isSaving } = useSelector(state => state.journal);
     const { body, title, date, onInputChange, formState } = useForm(note);
 
     const dateString = useMemo(() => {
@@ -26,22 +26,44 @@ export const NoteView = () => {
     }, [date]);
 
     useEffect(() => {
-        dispatch(setActiveNote(formState))
+        if (!formState?.id) return;
+
+        dispatch(setActiveNote({
+            title: formState.title ?? '',
+            body: formState.body ?? '',
+            date: formState.date,
+            id: formState.id,
+        }))
     }, [formState]);
 
     useEffect(() => {
-        if (messageSaved.length > 0) {
-            Swal.fire('Nota actualizada', messageSaved, 'success');
+        if (!lastSavedAt) {
+            setSavedLabel('');
+            return;
         }
-    }, [messageSaved]);
+
+        const updateLabel = () => setSavedLabel(formatSavedAgo(lastSavedAt));
+        updateLabel();
+        const intervalId = setInterval(updateLabel, 15000);
+        return () => clearInterval(intervalId);
+    }, [lastSavedAt]);
 
     const onSaveNote = () => {
         dispatch(startSaveNote());
     }
 
+    const onToggleImage = (url) => {
+        dispatch(toggleNoteImage(url));
+    }
+
+    const onToggleFavorite = () => {
+        if (!note?.id) return;
+        dispatch(startToggleFavorite(note.id));
+    }
+
     return (
         <Box
-            className='animate__animated animate__fadeIn anime__faster'
+            className="journal-note-shell"
             sx={{
                 minHeight: 'calc(100vh - 120px)',
                 backgroundColor: 'white',
@@ -79,30 +101,58 @@ export const NoteView = () => {
                     >
                         {dateString}
                     </Typography>
+                    {savedLabel && (
+                        <Typography sx={{ mt: 0.75, fontSize: 13, color: 'rgba(15, 23, 42, 0.45)' }}>
+                            {savedLabel}
+                        </Typography>
+                    )}
                 </Box>
 
-                <Button
-                    disabled={isSaving}
-                    onClick={onSaveNote}
-                    startIcon={isSaving ? <CircularProgress size={16} color="inherit" /> : <SaveOutlined />}
-                    sx={{
-                        px: 2.5,
-                        py: 1.1,
-                        borderRadius: 2.5,
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        fontSize: 15,
-                        boxShadow: 'none',
-                        backgroundColor: '#0F172A',
-                        color: 'white',
-                        '&:hover': {
-                            backgroundColor: '#1E293B',
-                            boxShadow: '0 10px 24px rgba(15, 23, 42, 0.18)',
-                        },
-                    }}
-                >
-                    Guardar
-                </Button>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton
+                        onClick={onToggleFavorite}
+                        disabled={isSaving}
+                        aria-label={note?.isFavorite ? 'Quitar de favoritos' : 'Marcar favorito'}
+                        sx={{
+                            color: note?.isFavorite ? '#C9A96E' : 'rgba(15, 23, 42, 0.35)',
+                            border: '1px solid rgba(15, 23, 42, 0.1)',
+                            borderRadius: 2.5,
+                            '&:hover': {
+                                backgroundColor: 'rgba(201, 169, 110, 0.1)',
+                                color: '#C9A96E',
+                            },
+                        }}
+                    >
+                        {note?.isFavorite ? <Star /> : <StarBorder />}
+                    </IconButton>
+
+                    <Button
+                        disabled={isSaving}
+                        onClick={onSaveNote}
+                        startIcon={isSaving ? <CircularProgress size={16} color="inherit" /> : <SaveOutlined />}
+                        sx={{
+                            px: 2.5,
+                            py: 1.1,
+                            borderRadius: 2.5,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            fontSize: 15,
+                            boxShadow: 'none',
+                            backgroundColor: '#0F172A',
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: '#1E293B',
+                                boxShadow: '0 10px 24px rgba(15, 23, 42, 0.18)',
+                            },
+                            '&.Mui-disabled': {
+                                backgroundColor: 'rgba(15, 23, 42, 0.45)',
+                                color: 'rgba(255, 255, 255, 0.85)',
+                            },
+                        }}
+                    >
+                        {isSaving ? 'Guardando...' : 'Guardar'}
+                    </Button>
+                </Box>
             </Box>
 
             <TextField
@@ -135,8 +185,8 @@ export const NoteView = () => {
                 variant="standard"
                 fullWidth
                 multiline
-                rows={3}
-                maxRows={3}
+                rows={2}
+                maxRows={2}
                 placeholder="¿Qué sucedió en el día de hoy?"
                 name='body'
                 value={body}
@@ -145,7 +195,7 @@ export const NoteView = () => {
                 sx={{
                     mt: 1,
                     '& .MuiInputBase-root': {
-                        height: 88,
+                        height: 56,
                         alignItems: 'flex-start',
                         overflow: 'hidden',
                     },
@@ -164,7 +214,11 @@ export const NoteView = () => {
                 }}
             />
 
-            <ImageGallery />
+            <NoteImageGallery
+                selectedUrls={note?.imageUrls || []}
+                onToggle={onToggleImage}
+                disabled={isSaving}
+            />
         </Box>
     )
 }
