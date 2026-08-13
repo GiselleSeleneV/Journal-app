@@ -1,11 +1,14 @@
 import { Link as RouterLink } from 'react-router-dom'
-import { Alert, Button, Grid, Link, TextField, Typography, InputAdornment, IconButton } from '@mui/material'
+import {
+    Alert, Box, Button, CircularProgress, IconButton, InputAdornment,
+    Link, TextField, Typography
+} from '@mui/material'
 import { AuthLayout } from '../layout/AuthLayout'
 import { useForm } from '../../hooks'
 import { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { startCreatingUserWithEmailAndPassword } from '../../store/auth'
-import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { LockOutlined, MailOutline, PersonOutline, Visibility, VisibilityOff } from '@mui/icons-material'
 
 const formData = {
     email: '',
@@ -19,6 +22,16 @@ const formValidations = {
     displayName: [(value) => value.length >= 1, 'El nombre es obligatorio']
 };
 
+const fieldStyles = {
+    '& .MuiOutlinedInput-root': {
+        borderRadius: 2.5,
+        backgroundColor: '#FAFAF8',
+        '& fieldset': { borderColor: 'rgba(15, 23, 42, 0.12)' },
+        '&:hover fieldset': { borderColor: 'rgba(15, 23, 42, 0.28)' },
+        '&.Mui-focused fieldset': { borderColor: '#0F172A' },
+    },
+}
+
 export const RegisterPage = () => {
     const dispatch = useDispatch()
     const [formSubmitted, setFormSubmitted] = useState(false)
@@ -30,7 +43,6 @@ export const RegisterPage = () => {
     const {
         displayName, email, password, formState, onInputChange,
         displayNameValid, emailValid, passwordValid, isFormValid
-
     } = useForm(formData, formValidations);
 
     const onSubmit = (e) => {
@@ -49,102 +61,130 @@ export const RegisterPage = () => {
     };
 
     return (
-        <AuthLayout title="Crear cuenta">
-            <form onSubmit={onSubmit} className='animate__animated animate__fadeIn anime__faster'>
-                <Grid container direction="column">
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <TextField
-                            label='Nombre completo'
-                            type='text'
-                            placeholder='Tu nombre'
-                            fullWidth
-                            name='displayName'
-                            value={displayName}
-                            onChange={onInputChange}
-                            error={!!displayNameValid && formSubmitted}
-                            helperText={displayNameValid}
-                        />
-                    </Grid>
+        <AuthLayout
+            title="Crea tu cuenta"
+            subtitle="Empieza a guardar tus pensamientos en un solo lugar."
+        >
+            <Box
+                component="form"
+                onSubmit={onSubmit}
+                className="animate__animated animate__fadeIn anime__faster"
+                sx={{ display: 'flex', flexDirection: 'column', gap: 2.25 }}
+            >
+                <TextField
+                    label="Nombre completo"
+                    type="text"
+                    placeholder="Tu nombre"
+                    fullWidth
+                    name="displayName"
+                    value={displayName}
+                    onChange={onInputChange}
+                    error={!!displayNameValid && formSubmitted}
+                    helperText={formSubmitted ? displayNameValid : ''}
+                    sx={fieldStyles}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <PersonOutline sx={{ color: '#94A3B8', fontSize: 20 }} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
 
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <TextField
-                            label='Correo'
-                            type='email'
-                            placeholder='correo@ejemplo.com'
-                            fullWidth
-                            name='email'
-                            value={email}
-                            onChange={onInputChange}
-                            error={!!emailValid && formSubmitted}
-                            helperText={emailValid}
-                        />
-                    </Grid>
+                <TextField
+                    label="Correo"
+                    type="email"
+                    placeholder="correo@ejemplo.com"
+                    fullWidth
+                    name="email"
+                    value={email}
+                    onChange={onInputChange}
+                    error={!!emailValid && formSubmitted}
+                    helperText={formSubmitted ? emailValid : ''}
+                    sx={fieldStyles}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <MailOutline sx={{ color: '#94A3B8', fontSize: 20 }} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
 
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <TextField
-                            label='Contraseña'
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder='Contraseña'
-                            fullWidth
-                            name='password'
-                            value={password}
-                            onChange={onInputChange}
-                            error={!!passwordValid && formSubmitted}
-                            helperText={passwordValid}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                        >
-                                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    </Grid>
+                <TextField
+                    label="Contraseña"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Contraseña"
+                    fullWidth
+                    name="password"
+                    value={password}
+                    onChange={onInputChange}
+                    error={!!passwordValid && formSubmitted}
+                    helperText={formSubmitted ? passwordValid : ''}
+                    sx={fieldStyles}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <LockOutlined sx={{ color: '#94A3B8', fontSize: 20 }} />
+                            </InputAdornment>
+                        ),
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                >
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                    }}
+                />
 
-                    <Grid container spacing='2' sx={{
-                        justifyContent: 'space-between',
-                    }}>
-                        <Grid
-                            item
-                            sx={{ mt: 2, width: '100%' }}
-                            display={errorMessage ? '' : 'none'}>
-                            <Alert severity='error'>
-                                {errorMessage}
-                            </Alert>
-                        </Grid>
+                <Box display={errorMessage ? 'block' : 'none'}>
+                    <Alert severity="error" sx={{ borderRadius: 2 }}>
+                        {errorMessage}
+                    </Alert>
+                </Box>
 
-                        <Grid
-                            item
-                            sx={{ mt: 2, width: '100%' }}>
-                            <Button
-                                type='submit'
-                                variant='contained'
-                                fullWidth
-                                disabled={!isFormValid || isCheckingAuthentication}
-                            >
-                                Crear cuenta
-                            </Button>
-                        </Grid>
-                    </Grid>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    disabled={!isFormValid || isCheckingAuthentication}
+                    sx={{
+                        mt: 0.5,
+                        py: 1.35,
+                        borderRadius: 2.5,
+                        textTransform: 'none',
+                        fontSize: 16,
+                        fontWeight: 600,
+                        boxShadow: 'none',
+                        backgroundColor: '#0F172A',
+                        '&:hover': {
+                            backgroundColor: '#1E293B',
+                            boxShadow: '0 10px 24px rgba(15, 23, 42, 0.22)',
+                        },
+                    }}
+                >
+                    {isCheckingAuthentication
+                        ? <CircularProgress size={22} color="inherit" />
+                        : 'Crear cuenta'}
+                </Button>
 
-                    <Grid container direction="row" justifyContent="end" alignItems="center" sx={{ mt: 1 }}>
-                        <Grid item>
-                            <Typography sx={{ mr: 1 }}>¿Ya tienes cuenta?</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Link component={RouterLink} color="inherit" to="/auth/login">
-                                Ingresar
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </form>
+                <Typography sx={{ mt: 1, textAlign: 'center', color: '#64748B', fontSize: 14.5 }}>
+                    ¿Ya tienes cuenta?{' '}
+                    <Link
+                        component={RouterLink}
+                        to="/auth/login"
+                        underline="hover"
+                        sx={{ color: '#0F172A', fontWeight: 700 }}
+                    >
+                        Iniciar sesión
+                    </Link>
+                </Typography>
+            </Box>
         </AuthLayout>
     )
 }

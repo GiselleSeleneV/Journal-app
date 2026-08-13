@@ -1,3 +1,7 @@
 .box-shadow {
-    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0,2)
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.auth-card {
+    animation-duration: 0.45s;
 }

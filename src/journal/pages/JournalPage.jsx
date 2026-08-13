@@ -1,4 +1,4 @@
-import { IconButton, Typography } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { JournalLayout } from '../layout/JournalLayout'
 import { NothingSelectedView, NoteView } from '../views'
 import { AddOutlined } from '@mui/icons-material'
@@ -27,12 +27,20 @@ export const JournalPage = () => {
                 size='medium'
                 disabled={isSaving}
                 sx={{
-                    color: 'white',
-                    backgroundColor: 'error.main',
-                    ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
+                    display: { xs: 'flex', md: 'none' },
+                    color: '#0F172A',
+                    backgroundColor: '#C9A96E',
+                    ':hover': { backgroundColor: '#D4B87A' },
                     position: 'fixed',
-                    right: 40,
-                    bottom: 40,
+                    right: 24,
+                    bottom: 24,
+                    width: 56,
+                    height: 56,
+                    boxShadow: '0 12px 28px rgba(15, 23, 42, 0.2)',
+                    '&.Mui-disabled': {
+                        backgroundColor: 'rgba(201,169,110,0.45)',
+                        color: 'rgba(15, 23, 42, 0.4)',
+                    },
                 }}
             >
                 <AddOutlined sx={{ fontSize: 30 }} />
