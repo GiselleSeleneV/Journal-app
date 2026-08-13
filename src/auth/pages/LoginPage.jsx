@@ -1,36 +1,55 @@
+import { useMemo, useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { Google } from '@mui/icons-material'
-import { Button, Grid, Link, TextField, Typography } from '@mui/material'
+import { Google, Visibility, VisibilityOff } from '@mui/icons-material'
+import { Button, Grid, Link, TextField, Typography, IconButton, InputAdornment, Alert } from '@mui/material'
 import { AuthLayout } from '../layout/AuthLayout'
 import { useForm } from '../../hooks'
-import { useDispatch } from 'react-redux'
-import { checkingAuthentication, startGoogleSignIn } from '../../store/auth'
+import { useDispatch, useSelector } from 'react-redux'
+import { startGoogleSignIn, startLoginWithEmailAndPassword } from '../../store/auth'
+
+
+const formValidations = {
+    email: [(value) => value.includes('@'), 'El correo debe tener un @'],
+    password: [(value) => value.length >= 6, 'La contraseña debe de tener más de 6 caracteres'],
+};
+
+const formData = {
+    email: '',
+    password: '',
+
+}
 
 export const LoginPage = () => {
+    const { status, errorMessage } = useSelector(state => state.auth)
     const dispatch = useDispatch();
 
-    const { email, password, onInputChange } = useForm({
-        email: 'fernando@google.com',
-        password: "123456"
-    })
+    const {
+        email, password, onInputChange,
+        emailValid, passwordValid, isFormValid
+
+    } = useForm(formData, formValidations)
+
+    const [showPassword, setShowPassword] = useState(false);
+    const isAuthenticating = useMemo(() => status === 'checking', [status])
 
     const onSubmit = (e) => {
         e.preventDefault();
-
-        console.log({ email, password })
-        dispatch(checkingAuthentication());
+        dispatch(startLoginWithEmailAndPassword({ email, password }));
     }
 
     const onGoogleSignIn = (e) => {
         e.preventDefault();
-
-        console.log({ email, password })
         dispatch(startGoogleSignIn());
     }
 
+    const handleClickShowPassword = () => setShowPassword((prev) => !prev);
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+
     return (
         <AuthLayout title="Iniciar sesión">
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} className='animate__animated animate__fadeIn anime__faster'>
                 <Grid container direction="column">
                     <Grid item xs={12} sx={{ mt: 2 }}>
                         <TextField
@@ -41,24 +60,48 @@ export const LoginPage = () => {
                             name='email'
                             value={email}
                             onChange={onInputChange}
+                            helperText={emailValid}
                         />
                     </Grid>
 
                     <Grid item xs={12} sx={{ mt: 2 }}>
                         <TextField
                             label='Contraseña'
-                            type='password'
+                            type={showPassword ? 'text' : 'password'}
                             placeholder='Contraseña'
                             fullWidth
                             name='password'
                             value={password}
                             onChange={onInputChange}
+                            helperText={passwordValid}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
                         />
                     </Grid>
 
-                    <Grid container spacing='2' sx={{
-                        justifyContent: 'space-between',
-                    }}>
+                    <Grid container>
+                        <Grid
+                            item
+                            sx={{ mt: 1, width: '100%' }}
+                            display={errorMessage ? '' : 'none'}>
+                            <Alert severity='error'>
+                                {errorMessage}
+                            </Alert>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing='2' sx={{ justifyContent: 'space-between' }}>
                         <Grid
                             item
                             sx={{
@@ -70,7 +113,12 @@ export const LoginPage = () => {
                                 },
                                 mt: 2
                             }}>
-                            <Button type='submit' variant='contained' fullWidth>
+                            <Button
+                                type='submit'
+                                variant='contained'
+                                fullWidth
+                                disabled={!isFormValid || isAuthenticating}
+                            >
                                 Login
                             </Button>
                         </Grid>
@@ -93,7 +141,6 @@ export const LoginPage = () => {
                             >
                                 <Google />
                                 <Typography sx={{ ml: 1 }}>Google</Typography>
-
                             </Button>
                         </Grid>
                     </Grid>

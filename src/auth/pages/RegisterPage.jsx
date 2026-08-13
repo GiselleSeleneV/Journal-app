@@ -1,12 +1,56 @@
 import { Link as RouterLink } from 'react-router-dom'
-import { Google } from '@mui/icons-material'
-import { Button, Grid, Link, TextField, Typography } from '@mui/material'
+import { Alert, Button, Grid, Link, TextField, Typography, InputAdornment, IconButton } from '@mui/material'
 import { AuthLayout } from '../layout/AuthLayout'
+import { useForm } from '../../hooks'
+import { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { startCreatingUserWithEmailAndPassword } from '../../store/auth'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
+
+const formData = {
+    email: '',
+    password: "",
+    displayName: ''
+}
+
+const formValidations = {
+    email: [(value) => value.includes('@'), 'El correo debe tener un @'],
+    password: [(value) => value.length >= 6, 'La contraseña debe de tener más de 6 caracteres'],
+    displayName: [(value) => value.length >= 1, 'El nombre es obligatorio']
+};
 
 export const RegisterPage = () => {
+    const dispatch = useDispatch()
+    const [formSubmitted, setFormSubmitted] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
+
+    const { status, errorMessage } = useSelector(state => state.auth);
+    const isCheckingAuthentication = useMemo(() => status === 'checking', [status]);
+
+    const {
+        displayName, email, password, formState, onInputChange,
+        displayNameValid, emailValid, passwordValid, isFormValid
+
+    } = useForm(formData, formValidations);
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+
+        setFormSubmitted(true)
+
+        if (!isFormValid) return;
+
+        dispatch(startCreatingUserWithEmailAndPassword(formState))
+    }
+
+    const handleClickShowPassword = () => setShowPassword((prev) => !prev);
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+
     return (
         <AuthLayout title="Crear cuenta">
-            <form>
+            <form onSubmit={onSubmit} className='animate__animated animate__fadeIn anime__faster'>
                 <Grid container direction="column">
                     <Grid item xs={12} sx={{ mt: 2 }}>
                         <TextField
@@ -14,6 +58,11 @@ export const RegisterPage = () => {
                             type='text'
                             placeholder='Tu nombre'
                             fullWidth
+                            name='displayName'
+                            value={displayName}
+                            onChange={onInputChange}
+                            error={!!displayNameValid && formSubmitted}
+                            helperText={displayNameValid}
                         />
                     </Grid>
 
@@ -23,15 +72,38 @@ export const RegisterPage = () => {
                             type='email'
                             placeholder='correo@ejemplo.com'
                             fullWidth
+                            name='email'
+                            value={email}
+                            onChange={onInputChange}
+                            error={!!emailValid && formSubmitted}
+                            helperText={emailValid}
                         />
                     </Grid>
 
                     <Grid item xs={12} sx={{ mt: 2 }}>
                         <TextField
                             label='Contraseña'
-                            type='password'
+                            type={showPassword ? 'text' : 'password'}
                             placeholder='Contraseña'
                             fullWidth
+                            name='password'
+                            value={password}
+                            onChange={onInputChange}
+                            error={!!passwordValid && formSubmitted}
+                            helperText={passwordValid}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
                         />
                     </Grid>
 
@@ -40,8 +112,22 @@ export const RegisterPage = () => {
                     }}>
                         <Grid
                             item
+                            sx={{ mt: 2, width: '100%' }}
+                            display={errorMessage ? '' : 'none'}>
+                            <Alert severity='error'>
+                                {errorMessage}
+                            </Alert>
+                        </Grid>
+
+                        <Grid
+                            item
                             sx={{ mt: 2, width: '100%' }}>
-                            <Button variant='contained' fullWidth>
+                            <Button
+                                type='submit'
+                                variant='contained'
+                                fullWidth
+                                disabled={!isFormValid || isCheckingAuthentication}
+                            >
                                 Crear cuenta
                             </Button>
                         </Grid>
