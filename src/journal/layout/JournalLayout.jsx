@@ -12,7 +12,12 @@ export const JournalLayout = ({ children }) => {
 
     return (
         <Box
-            sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#FAF7F2' }}
+            sx={{
+                display: 'flex',
+                minHeight: '100vh',
+                background: 'linear-gradient(180deg, #FAF7F2 0%, #F3EEE6 100%)',
+                backgroundAttachment: 'fixed',
+            }}
             className='animate__animated animate__fadeIn anime__faster'
         >
             <NavBar
@@ -32,6 +37,7 @@ export const JournalLayout = ({ children }) => {
                     flexGrow: 1,
                     p: { xs: 2, md: 3 },
                     minWidth: 0,
+                    background: 'transparent',
                 }}
             >
                 <Toolbar />

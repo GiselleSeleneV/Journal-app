@@ -27,7 +27,9 @@ export const blueTheme = createTheme({
         MuiCssBaseline: {
             styleOverrides: {
                 body: {
-                    backgroundColor: '#FAF7F2',
+                    background: 'linear-gradient(180deg, #FAF7F2 0%, #F3EEE6 100%)',
+                    backgroundAttachment: 'fixed',
+                    minHeight: '100vh',
                 }
             }
         }

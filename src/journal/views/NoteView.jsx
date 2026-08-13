@@ -66,7 +66,7 @@ export const NoteView = () => {
             className="journal-note-shell"
             sx={{
                 minHeight: 'calc(100vh - 120px)',
-                backgroundColor: 'white',
+                background: 'linear-gradient(180deg, #FAF7F2 0%, #F3EEE6 100%)',
                 borderRadius: 4,
                 border: '1px solid rgba(15, 23, 42, 0.06)',
                 boxShadow: '0 18px 50px rgba(15, 23, 42, 0.06)',

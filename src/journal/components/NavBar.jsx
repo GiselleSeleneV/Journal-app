@@ -18,8 +18,8 @@ export const NavBar = ({ drawerWidth = 280, onToggleDrawer }) => {
             sx={{
                 width: { md: `calc(100% - ${drawerWidth}px)` },
                 ml: { md: `${drawerWidth}px` },
-                backgroundColor: 'rgba(250, 247, 242, 0.86)',
-                backdropFilter: 'blur(16px)',
+                background: 'linear-gradient(180deg, #FAF7F2 0%, #F3EEE6 100%)',
+                backgroundAttachment: 'fixed',
                 color: '#0F172A',
                 borderBottom: '1px solid rgba(15, 23, 42, 0.06)',
             }}
